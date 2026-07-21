@@ -1079,6 +1079,205 @@
 </head>
 
 <body data-theme="dark">
+<!-- ============ LOGIN OVERLAY ============ -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:9999;overflow:auto;">
+<style>
+  #login-overlay { width:100%; min-height:100vh; }
+  #login-overlay * { box-sizing:border-box; }
+  .lo-page { display:grid; grid-template-columns:1fr 1fr; min-height:100vh; width:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .lo-left { background:linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 100%); display:flex; flex-direction:column; padding:28px 32px 24px; position:relative; overflow:hidden; }
+  .lo-brand { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#333; z-index:10; position:relative; }
+  .lo-brand-icon { width:30px; height:30px; border-radius:7px; background:rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; }
+  .lo-stage { flex:1; display:flex; align-items:flex-end; justify-content:center; position:relative; z-index:10; }
+  .lo-scene { position:relative; width:460px; height:400px; }
+  .lo-char { position:absolute; bottom:0; transform-origin:bottom center; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1), height 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .lo-left-footer { display:flex; gap:22px; z-index:10; position:relative; }
+  .lo-left-footer a { color:#888; font-size:12px; text-decoration:none; }
+  .lo-left-footer a:hover { color:#333; }
+  .lo-right { background:#fff; display:flex; align-items:center; justify-content:center; padding:40px 52px; }
+  .lo-form-wrap { width:100%; max-width:360px; }
+  .lo-form-wrap h1 { font-size:28px; font-weight:700; color:#111; margin-bottom:6px; letter-spacing:-0.5px; }
+  .lo-sub { font-size:14px; color:#888; margin-bottom:28px; }
+  .lo-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.5px; margin-bottom:10px; }
+  .lo-badge.login { background:#f0edff; color:#6c3ef5; }
+  .lo-badge.register { background:#dcfce7; color:#166534; }
+  .lo-field { margin-bottom:16px; }
+  .lo-field label { display:block; font-size:13px; font-weight:500; color:#333; margin-bottom:5px; }
+  .lo-field input { width:100%; height:44px; border:1.5px solid #e0e0e0; border-radius:8px; padding:0 42px 0 14px; font-size:14px; color:#111; outline:none; background:#fff; transition:border-color .15s,box-shadow .15s; }
+  .lo-field input:focus { border-color:#6c3ef5; box-shadow:0 0 0 3px rgba(108,62,245,0.1); }
+  .lo-pw-wrap { position:relative; }
+  .lo-pw-wrap input { padding-right:42px; }
+  .lo-pw-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#aaa; display:flex; padding:2px; }
+  .lo-pw-toggle:hover { color:#666; }
+  .lo-err { background:#fff1f1; border:1px solid #ffcdd2; color:#d32f2f; font-size:13px; padding:10px 14px; border-radius:8px; margin-bottom:12px; display:none; }
+  .lo-suc { background:#f0fff4; border:1px solid #bbf7d0; color:#166534; font-size:13px; padding:10px 14px; border-radius:8px; margin-bottom:12px; display:none; }
+  .lo-btn { width:100%; height:44px; background:#111; color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; margin-bottom:10px; transition:background .15s,transform .1s; }
+  .lo-btn:hover { background:#333; }
+  .lo-btn:active { transform:scale(0.98); }
+  .lo-btn:disabled { opacity:.65; cursor:default; }
+  .lo-btn-g { width:100%; height:44px; background:#fff; border:1.5px solid #e0e0e0; border-radius:8px; font-size:14px; color:#333; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .15s; margin-bottom:0; }
+  .lo-btn-g:hover { background:#f5f5f5; }
+  .lo-divider { text-align:center; color:#ccc; font-size:12px; margin:12px 0; position:relative; }
+  .lo-divider::before,.lo-divider::after { content:""; position:absolute; top:50%; width:44%; height:1px; background:#eee; }
+  .lo-divider::before { left:0; } .lo-divider::after { right:0; }
+  .lo-switch { text-align:center; font-size:13px; color:#888; margin-top:18px; }
+  .lo-switch a { color:#111; font-weight:600; text-decoration:none; cursor:pointer; }
+  .lo-switch a:hover { text-decoration:underline; }
+  @media(max-width:700px){ .lo-left{display:none;} .lo-page{grid-template-columns:1fr;} }
+</style>
+
+<div class="lo-page">
+  <!-- LEFT PANEL — exact characters from design -->
+  <div class="lo-left">
+    <div class="lo-brand">
+      <div class="lo-brand-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      Dharanish Finance
+    </div>
+
+    <div class="lo-stage">
+      <div class="lo-scene" id="lo-scene">
+
+        <!-- PURPLE tall rect -->
+        <div id="lo-c-purple" class="lo-char"
+             style="left:68px;width:170px;height:360px;background:#6C3FF5;border-radius:12px 12px 0 0;z-index:1;">
+          <div id="lo-eyes-purple" style="position:absolute;display:flex;gap:26px;transition:left .5s ease,top .5s ease;">
+            <div id="lo-ep-l" style="width:22px;height:22px;border-radius:50%;background:white;position:relative;overflow:hidden;">
+              <div id="lo-pu-l" style="width:10px;height:10px;border-radius:50%;background:#1a1a1a;position:absolute;top:6px;left:6px;transition:top .1s ease-out,left .1s ease-out;"></div>
+            </div>
+            <div id="lo-ep-r" style="width:22px;height:22px;border-radius:50%;background:white;position:relative;overflow:hidden;">
+              <div id="lo-pu-r" style="width:10px;height:10px;border-radius:50%;background:#1a1a1a;position:absolute;top:6px;left:6px;transition:top .1s ease-out,left .1s ease-out;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLACK medium rect -->
+        <div id="lo-c-black" class="lo-char"
+             style="left:222px;width:108px;height:265px;background:#2D2D2D;border-radius:8px 8px 0 0;z-index:2;">
+          <div id="lo-eyes-black" style="position:absolute;display:flex;gap:18px;transition:left .5s ease,top .5s ease;">
+            <div id="lo-eb-l" style="width:18px;height:18px;border-radius:50%;background:white;position:relative;overflow:hidden;">
+              <div id="lo-pb-l" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;position:absolute;top:5px;left:5px;transition:top .1s ease-out,left .1s ease-out;"></div>
+            </div>
+            <div id="lo-eb-r" style="width:18px;height:18px;border-radius:50%;background:white;position:relative;overflow:hidden;">
+              <div id="lo-pb-r" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;position:absolute;top:5px;left:5px;transition:top .1s ease-out,left .1s ease-out;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORANGE wide dome — dot eyes, no white circles -->
+        <div id="lo-c-orange" class="lo-char"
+             style="left:0;width:250px;height:200px;background:#FF9B6B;border-radius:125px 125px 0 0;z-index:3;">
+          <svg id="lo-svg-o" viewBox="0 0 250 200"
+               style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">
+            <circle id="lo-o-bg1" cx="82"  cy="122" r="11"  fill="#FF9B6B"/>
+            <circle id="lo-o-p1"  cx="82"  cy="122" r="7.5" fill="#1a1a1a"/>
+            <circle id="lo-o-bg2" cx="155" cy="122" r="11"  fill="#FF9B6B"/>
+            <circle id="lo-o-p2"  cx="155" cy="122" r="7.5" fill="#1a1a1a"/>
+          </svg>
+        </div>
+
+        <!-- YELLOW tombstone — dot eyes + mouth -->
+        <div id="lo-c-yellow" class="lo-char"
+             style="left:316px;width:138px;height:225px;background:#E8D754;border-radius:69px 69px 0 0;z-index:4;">
+          <svg id="lo-svg-y" viewBox="0 0 138 225"
+               style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">
+            <circle id="lo-y-bg1" cx="42" cy="68" r="10" fill="#E8D754"/>
+            <circle id="lo-y-p1"  cx="42" cy="68" r="7"  fill="#1a1a1a"/>
+            <circle id="lo-y-bg2" cx="92" cy="68" r="10" fill="#E8D754"/>
+            <circle id="lo-y-p2"  cx="92" cy="68" r="7"  fill="#1a1a1a"/>
+            <rect   id="lo-y-mouth" x="24" y="108" width="90" height="5" rx="2.5" fill="#1a1a1a"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="lo-left-footer">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — Login & Register forms -->
+  <div class="lo-right">
+    <div class="lo-form-wrap">
+
+      <!-- LOGIN FORM -->
+      <div id="lo-login-form">
+        <div class="lo-badge login">LOGIN</div>
+        <h1>Welcome back!</h1>
+        <p class="lo-sub">Sign in to your account</p>
+        <div class="lo-field">
+          <label>Username</label>
+          <input type="text" id="lo-username" placeholder="Your username" autocomplete="off">
+        </div>
+        <div class="lo-field">
+          <label>Password</label>
+          <div class="lo-pw-wrap">
+            <input type="password" id="lo-password" placeholder="Your password">
+            <button class="lo-pw-toggle" id="lo-pw-toggle" type="button">
+              <svg id="lo-eye-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="lo-err" id="lo-login-err"></div>
+        <div class="lo-suc" id="lo-login-suc"></div>
+        <button class="lo-btn" id="lo-login-btn">Log in</button>
+        <div class="lo-divider">or</div>
+        <button class="lo-btn-g" id="lo-google-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Log in with Google
+        </button>
+        <div class="lo-switch">Don't have an account? <a id="lo-go-register">Create account</a></div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="lo-register-form" style="display:none;">
+        <div class="lo-badge register">NEW ACCOUNT</div>
+        <h1>Create account</h1>
+        <p class="lo-sub">Start tracking your finances</p>
+        <div class="lo-field">
+          <label>Username</label>
+          <input type="text" id="lo-reg-username" placeholder="Choose a username" autocomplete="off">
+        </div>
+        <div class="lo-field">
+          <label>Password</label>
+          <div class="lo-pw-wrap">
+            <input type="password" id="lo-reg-password" placeholder="Create password">
+            <button class="lo-pw-toggle" id="lo-reg-pw-toggle" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="lo-field">
+          <label>Confirm Password</label>
+          <div class="lo-pw-wrap">
+            <input type="password" id="lo-reg-confirm" placeholder="Repeat password">
+            <button class="lo-pw-toggle" id="lo-reg-cf-toggle" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="lo-err" id="lo-reg-err"></div>
+        <div class="lo-suc" id="lo-reg-suc"></div>
+        <button class="lo-btn" id="lo-register-btn">Create Account</button>
+        <div class="lo-switch">Already registered? <a id="lo-go-login">Log in</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<!-- ============ END LOGIN OVERLAY ============ -->
+
 
   <div class="container">
 
@@ -2015,6 +2214,7 @@
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
     let _currentUser = null;
+    let _activeUserId = null; // username or Google UID — used for all Firestore paths
     let _historyCache = null; // in-memory cache
 
     function showToast(msg, duration = 2500) {
@@ -2028,14 +2228,15 @@
       const btn = document.getElementById('auth-btn');
       const icon = document.getElementById('auth-btn-icon');
       const label = document.getElementById('auth-btn-label');
-      if (user) {
+      if (user || _activeUserId) {
         btn.classList.add('signed-in');
-        if (user.photoURL) {
-          icon.innerHTML = `<img src="${user.photoURL}" class="auth-avatar" referrerpolicy="no-referrer">`;
+        if (user && user.photoURL) {
+          icon.innerHTML = '<img src="' + user.photoURL + '" class="auth-avatar" referrerpolicy="no-referrer">';
         } else {
-          icon.innerHTML = `<span class="auth-status-dot"></span>`;
+          icon.innerHTML = '<span class="auth-status-dot"></span>';
         }
-        label.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Signed in';
+        const name = user ? (user.displayName ? user.displayName.split(' ')[0] : user.email) : _activeUserId;
+        label.textContent = name || 'Signed in';
       } else {
         btn.classList.remove('signed-in');
         icon.textContent = 'G';
@@ -2044,10 +2245,26 @@
     }
 
     function handleAuthClick() {
-      if (_currentUser) {
-        if (confirm('Sign out?')) auth.signOut();
+      if (_currentUser || _activeUserId) {
+        if (confirm('Sign out?')) {
+          if (_currentUser && auth) auth.signOut();
+          _activeUserId = null; _currentUser = null;
+          _historyCache = null; _brokersState = { stocks: {}, mf: {} };
+          updateAuthUI(null); renderDashboard();
+          const ov = document.getElementById('login-overlay');
+          if (ov) {
+            ov.style.display = 'flex';
+            document.getElementById('lo-username').value = '';
+            document.getElementById('lo-password').value = '';
+          }
+        }
       } else {
-        auth.signInWithPopup(googleProvider).catch(e => alert('Sign-in failed: ' + e.message));
+        if (auth && googleProvider) {
+          auth.signInWithPopup(googleProvider).catch(e => alert('Sign-in failed: ' + e.message));
+        } else {
+          const ov = document.getElementById('login-overlay');
+          if (ov) ov.style.display = 'flex';
+        }
       }
     }
 
@@ -2085,9 +2302,9 @@
 
     /* -- Firestore helpers -- */
     async function loadFromFirestore() {
-      if (!_currentUser) return;
+      if (!_activeUserId) return;
       try {
-        const docRef = db.collection('users').doc(_currentUser.uid).collection('finance').doc('history');
+        const docRef = db.collection('users').doc(_activeUserId).collection('finance').doc('history');
         const snap = await docRef.get();
         _historyCache = snap.exists ? (snap.data().entries || []) : [];
         // Merge any existing localStorage data into cloud on first login
@@ -2101,20 +2318,20 @@
     }
 
     async function pushToFirestore(arr) {
-      if (!_currentUser) return;
+      if (!_activeUserId) return;
       try {
-        await db.collection('users').doc(_currentUser.uid).collection('finance').doc('history').set({ entries: arr, updatedAt: Date.now() });
+        await db.collection('users').doc(_activeUserId).collection('finance').doc('history').set({ entries: arr, updatedAt: Date.now() });
       } catch (e) { console.error('Firestore save error', e); }
     }
 
     function getHistory() {
-      if (_currentUser && _historyCache !== null) return _historyCache;
+      if (_activeUserId && _historyCache !== null) return _historyCache;
       // fallback localStorage
       try { const r = localStorage.getItem(HISTORY_KEY); return r ? JSON.parse(r) : []; } catch(e) { return []; }
     }
 
     function setHistory(arr) {
-      if (_currentUser) {
+      if (_activeUserId) {
         _historyCache = arr;
         pushToFirestore(arr).then(() => showToast('☁ Saved to cloud'));
       } else {
@@ -2370,6 +2587,317 @@
 
       renderHistoryTable(hist);
     }
+
+
+    /* ============================================================
+       LOGIN PAGE — FULL AUTH + ANIMATION
+       ============================================================ */
+    (function() {
+      var lmx = window.innerWidth/2, lmy = window.innerHeight/2;
+      var loTypingUser = false, loTypingPw = false, loTypingRegPw = false;
+      var loShowPw = false, loShowRegPw = false, loShowRegCf = false;
+      var loPwLen = 0, loRegPwLen = 0;
+      var loPurpleBlink = false, loBlackBlink = false;
+      var loLookEach = false, loPeeking = false;
+      var loCurrentForm = 'login'; // 'login' or 'register'
+
+      document.addEventListener('mousemove', function(e){ lmx=e.clientX; lmy=e.clientY; loRender(); });
+
+      function loRc(el){ var r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
+      function loGetSkew(el){ var c=loRc(el); return Math.max(-10,Math.min(10,-(lmx-c.x)/80)); }
+      function loGetPupilOff(px,py,maxD,fx,fy){
+        if(fx!==undefined) return {x:fx,y:fy};
+        var dx=lmx-px,dy=lmy-py,d=Math.min(Math.sqrt(dx*dx+dy*dy),maxD),a=Math.atan2(dy,dx);
+        return {x:Math.cos(a)*d,y:Math.sin(a)*d};
+      }
+      function loMovePupil(pupilEl,eyeEl,maxD,fx,fy,blinking){
+        var ew=eyeEl.offsetWidth,pr=eyeEl===document.getElementById('lo-ep-l')||eyeEl===document.getElementById('lo-ep-r')?5:4;
+        if(blinking){eyeEl.style.height='2px';pupilEl.style.opacity='0';return;}
+        eyeEl.style.height=ew+'px';pupilEl.style.opacity='1';
+        var c=loRc(eyeEl),o=loGetPupilOff(c.x,c.y,maxD,fx,fy);
+        var cx=ew/2-pr+o.x,cy=ew/2-pr+o.y;
+        cx=Math.max(0,Math.min(ew-pr*2,cx));cy=Math.max(0,Math.min(ew-pr*2,cy));
+        pupilEl.style.left=cx+'px';pupilEl.style.top=cy+'px';
+      }
+      function loMoveSvgDot(bgCircle,dotCircle,charEl,localX,localY,maxD,fx,fy){
+        var r=charEl.getBoundingClientRect();
+        var svgEl=charEl.querySelector('svg');
+        var vb=svgEl.getAttribute('viewBox').split(' ');
+        var scaleX=r.width/parseFloat(vb[2]),scaleY=r.height/parseFloat(vb[3]);
+        var screenX=r.left+localX*scaleX,screenY=r.top+localY*scaleY;
+        bgCircle.setAttribute('cx',localX);bgCircle.setAttribute('cy',localY);
+        var o=loGetPupilOff(screenX,screenY,maxD,fx,fy);
+        var lox=Math.max(-3.5,Math.min(3.5,o.x/scaleX)),loy=Math.max(-3.5,Math.min(3.5,o.y/scaleY));
+        dotCircle.setAttribute('cx',localX+lox);dotCircle.setAttribute('cy',localY+loy);
+      }
+
+      function loRender(){
+        var cp=document.getElementById('lo-c-purple');
+        var cb=document.getElementById('lo-c-black');
+        var co=document.getElementById('lo-c-orange');
+        var cy2=document.getElementById('lo-c-yellow');
+        var ep=document.getElementById('lo-eyes-purple');
+        var eb=document.getElementById('lo-eyes-black');
+        if(!cp) return;
+
+        var isCover = (loPwLen>0&&!loShowPw)||(loRegPwLen>0&&!loShowRegPw);
+        var isVis   = (loPwLen>0&&loShowPw)||(loRegPwLen>0&&loShowRegPw);
+        var isTyping = loTypingUser||loTypingPw||loTypingRegPw;
+        var ps=loGetSkew(cp),bs=loGetSkew(cb),os=loGetSkew(co),ys=loGetSkew(cy2);
+
+        /* PURPLE */
+        cp.style.height=((isTyping||isCover)?430:360)+'px';
+        if(isVis) cp.style.transform='skewX(0deg) translateX(0)';
+        else if(isCover) cp.style.transform='skewX('+(ps-12)+'deg) translateX(44px)';
+        else cp.style.transform='skewX('+ps+'deg)';
+        var pL=isVis?24:(loLookEach?62:42+ps*2),pT=isVis?32:(loLookEach?62:38);
+        ep.style.left=pL+'px';ep.style.top=pT+'px';
+        var pFX=isVis?(loPeeking?4:-4):(loLookEach?5:undefined);
+        var pFY=isVis?(loPeeking?5:-4):(loLookEach?4:undefined);
+        loMovePupil(document.getElementById('lo-pu-l'),document.getElementById('lo-ep-l'),5,pFX,pFY,loPurpleBlink);
+        loMovePupil(document.getElementById('lo-pu-r'),document.getElementById('lo-ep-r'),5,pFX,pFY,loPurpleBlink);
+
+        /* BLACK */
+        if(isVis) cb.style.transform='skewX(0deg)';
+        else if(loLookEach) cb.style.transform='skewX('+(bs*1.5+10)+'deg) translateX(18px)';
+        else if(isCover) cb.style.transform='skewX('+(bs*1.2)+'deg)';
+        else cb.style.transform='skewX('+bs+'deg)';
+        var bL=isVis?12:(loLookEach?20:18),bT=isVis?24:(loLookEach?10:28);
+        eb.style.left=bL+'px';eb.style.top=bT+'px';
+        var bFX=isVis?-4:(loLookEach?1:undefined),bFY=isVis?-4:(loLookEach?-4:undefined);
+        loMovePupil(document.getElementById('lo-pb-l'),document.getElementById('lo-eb-l'),4,bFX,bFY,loBlackBlink);
+        loMovePupil(document.getElementById('lo-pb-r'),document.getElementById('lo-eb-r'),4,bFX,bFY,loBlackBlink);
+
+        /* ORANGE */
+        co.style.transform=isVis?'skewX(0deg)':'skewX('+os+'deg)';
+        var oFX=isVis?-4:undefined,oFY=isVis?-3:undefined;
+        loMoveSvgDot(document.getElementById('lo-o-bg1'),document.getElementById('lo-o-p1'),co,82,122,4,oFX,oFY);
+        loMoveSvgDot(document.getElementById('lo-o-bg2'),document.getElementById('lo-o-p2'),co,155,122,4,oFX,oFY);
+
+        /* YELLOW */
+        cy2.style.transform=isVis?'skewX(0deg)':'skewX('+ys+'deg)';
+        var yFX=isVis?-4:undefined,yFY=isVis?-3:undefined;
+        loMoveSvgDot(document.getElementById('lo-y-bg1'),document.getElementById('lo-y-p1'),cy2,42,68,4,yFX,yFY);
+        loMoveSvgDot(document.getElementById('lo-y-bg2'),document.getElementById('lo-y-p2'),cy2,92,68,4,yFX,yFY);
+      }
+
+      /* Blink loops */
+      function loBlinkLoop(setter,min,max){
+        setTimeout(function(){
+          setter(true);loRender();
+          setTimeout(function(){setter(false);loRender();loBlinkLoop(setter,min,max);},145);
+        },min+Math.random()*(max-min));
+      }
+      loBlinkLoop(function(v){loPurpleBlink=v;},3000,7000);
+      loBlinkLoop(function(v){loBlackBlink=v;},3500,7500);
+
+      /* Peek loop */
+      function loPeekLoop(){
+        if(!loShowPw&&!loShowRegPw) return;
+        setTimeout(function(){
+          if(!loShowPw&&!loShowRegPw) return;
+          loPeeking=true;loRender();
+          setTimeout(function(){loPeeking=false;loRender();loPeekLoop();},900);
+        },2000+Math.random()*3000);
+      }
+
+      /* Look at each other */
+      function loTriggerLookEach(){loLookEach=true;loRender();setTimeout(function(){loLookEach=false;loRender();},900);}
+
+      /* Input events — Login form */
+      function loBindInputs(){
+        var unEl=document.getElementById('lo-username');
+        var pwEl=document.getElementById('lo-password');
+        if(unEl){
+          unEl.addEventListener('focus',function(){loTypingUser=true;loTriggerLookEach();loRender();});
+          unEl.addEventListener('blur',function(){loTypingUser=false;loRender();});
+        }
+        if(pwEl){
+          pwEl.addEventListener('focus',function(){loTypingPw=true;loRender();});
+          pwEl.addEventListener('blur',function(){loTypingPw=false;loRender();});
+          pwEl.addEventListener('input',function(e){loPwLen=e.target.value.length;loRender();});
+        }
+        /* Register form */
+        var ruEl=document.getElementById('lo-reg-username');
+        var rpEl=document.getElementById('lo-reg-password');
+        var rcEl=document.getElementById('lo-reg-confirm');
+        if(ruEl){
+          ruEl.addEventListener('focus',function(){loTypingUser=true;loTriggerLookEach();loRender();});
+          ruEl.addEventListener('blur',function(){loTypingUser=false;loRender();});
+        }
+        if(rpEl){
+          rpEl.addEventListener('focus',function(){loTypingRegPw=true;loRender();});
+          rpEl.addEventListener('blur',function(){loTypingRegPw=false;loRender();});
+          rpEl.addEventListener('input',function(e){loRegPwLen=e.target.value.length;loRender();});
+        }
+        if(rcEl){
+          rcEl.addEventListener('focus',function(){loTypingRegPw=true;loRender();});
+          rcEl.addEventListener('blur',function(){loTypingRegPw=false;loRender();});
+        }
+        /* Enter key */
+        [unEl,pwEl].forEach(function(el){if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter')loDoLogin();});});
+        [ruEl,rpEl,rcEl].forEach(function(el){if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter')loDoRegister();});});
+      }
+      loBindInputs();
+
+      /* Eye icon helper */
+      function loEyeIcon(open){
+        return open
+          ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+          : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      }
+
+      /* PW toggle - login */
+      var pwToggle=document.getElementById('lo-pw-toggle');
+      if(pwToggle) pwToggle.addEventListener('click',function(){
+        loShowPw=!loShowPw;
+        var inp=document.getElementById('lo-password');
+        if(inp) inp.type=loShowPw?'text':'password';
+        var svg=document.getElementById('lo-eye-svg');
+        if(svg) svg.innerHTML=loEyeIcon(loShowPw);
+        loRender();if(loShowPw)loPeekLoop();
+      });
+      /* PW toggle - register password */
+      var regPwToggle=document.getElementById('lo-reg-pw-toggle');
+      if(regPwToggle) regPwToggle.addEventListener('click',function(){
+        loShowRegPw=!loShowRegPw;
+        var inp=document.getElementById('lo-reg-password');
+        if(inp) inp.type=loShowRegPw?'text':'password';
+        var svg=regPwToggle.querySelector('svg');
+        if(svg) svg.innerHTML=loEyeIcon(loShowRegPw);
+        loRender();if(loShowRegPw)loPeekLoop();
+      });
+      /* PW toggle - register confirm */
+      var regCfToggle=document.getElementById('lo-reg-cf-toggle');
+      if(regCfToggle) regCfToggle.addEventListener('click',function(){
+        loShowRegCf=!loShowRegCf;
+        var inp=document.getElementById('lo-reg-confirm');
+        if(inp) inp.type=loShowRegCf?'text':'password';
+        var svg=regCfToggle.querySelector('svg');
+        if(svg) svg.innerHTML=loEyeIcon(loShowRegCf);
+      });
+
+      /* Form switching */
+      var goReg=document.getElementById('lo-go-register');
+      var goLog=document.getElementById('lo-go-login');
+      if(goReg) goReg.addEventListener('click',function(){
+        document.getElementById('lo-login-form').style.display='none';
+        document.getElementById('lo-register-form').style.display='block';
+        loCurrentForm='register';
+        loPwLen=0;loRegPwLen=0;loShowPw=false;loShowRegPw=false;loShowRegCf=false;
+        loTypingUser=false;loTypingPw=false;loTypingRegPw=false;loRender();
+      });
+      if(goLog) goLog.addEventListener('click',function(){
+        document.getElementById('lo-register-form').style.display='none';
+        document.getElementById('lo-login-form').style.display='block';
+        loCurrentForm='login';
+        loPwLen=0;loRegPwLen=0;loShowPw=false;loShowRegPw=false;
+        loTypingUser=false;loTypingPw=false;loTypingRegPw=false;loRender();
+      });
+
+      /* SHA-256 */
+      async function loHashPw(pw){
+        var enc=new TextEncoder();
+        var buf=await crypto.subtle.digest('SHA-256',enc.encode(pw));
+        return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      }
+
+      /* On successful login */
+      async function loOnSuccess(userId,displayName){
+        _activeUserId=userId;
+        updateAuthUI({displayName:displayName,photoURL:null});
+        _historyCache=null;
+        _brokersState={stocks:{},mf:{}};
+        var ov=document.getElementById('login-overlay');
+        if(ov) ov.style.display='none';
+        showToast('\u2601 Loading your data...');
+        await loadFromFirestore();
+        showToast('\u2713 Welcome, '+displayName+'!');
+        renderDashboard();
+      }
+
+      /* LOGIN */
+      async function loDoLogin(){
+        var username=(document.getElementById('lo-username').value||'').trim().toLowerCase();
+        var password=document.getElementById('lo-password').value;
+        var errEl=document.getElementById('lo-login-err');
+        var sucEl=document.getElementById('lo-login-suc');
+        var btn=document.getElementById('lo-login-btn');
+        errEl.style.display='none';sucEl.style.display='none';
+        if(!username||!password){errEl.textContent='Please enter username and password.';errEl.style.display='block';return;}
+        btn.disabled=true;btn.textContent='Signing in...';
+        try{
+          if(!db) throw new Error('Database not available. Please use GitHub Pages URL.');
+          var snap=await db.collection('app_users').doc(username).get();
+          if(!snap.exists){errEl.textContent='Username not found. Please create an account.';errEl.style.display='block';btn.disabled=false;btn.textContent='Log in';return;}
+          var hashed=await loHashPw(password);
+          if(snap.data().password!==hashed){errEl.textContent='Incorrect password. Please try again.';errEl.style.display='block';btn.disabled=false;btn.textContent='Log in';return;}
+          sucEl.textContent='\u2713 Login successful! Loading your data...';
+          sucEl.style.display='block';btn.textContent='\u2713 Success!';
+          btn.style.background='#16a34a';
+          setTimeout(function(){loOnSuccess('usr_'+username,snap.data().displayName||username);},600);
+        }catch(e){errEl.textContent='Error: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Log in';btn.style.background='';}
+      }
+
+      /* REGISTER */
+      async function loDoRegister(){
+        var username=(document.getElementById('lo-reg-username').value||'').trim().toLowerCase();
+        var password=document.getElementById('lo-reg-password').value;
+        var confirm=document.getElementById('lo-reg-confirm').value;
+        var errEl=document.getElementById('lo-reg-err');
+        var sucEl=document.getElementById('lo-reg-suc');
+        var btn=document.getElementById('lo-register-btn');
+        errEl.style.display='none';sucEl.style.display='none';
+        if(!username||!password||!confirm){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
+        if(username.length<3){errEl.textContent='Username must be at least 3 characters.';errEl.style.display='block';return;}
+        if(password.length<4){errEl.textContent='Password must be at least 4 characters.';errEl.style.display='block';return;}
+        if(password!==confirm){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+        btn.disabled=true;btn.textContent='Creating account...';
+        try{
+          if(!db) throw new Error('Database not available. Please use GitHub Pages URL.');
+          var existing=await db.collection('app_users').doc(username).get();
+          if(existing.exists){errEl.textContent='Username already taken. Choose another.';errEl.style.display='block';btn.disabled=false;btn.textContent='Create Account';return;}
+          var hashed=await loHashPw(password);
+          await db.collection('app_users').doc(username).set({displayName:username,password:hashed,createdAt:Date.now()});
+          sucEl.textContent='\u2713 Account created! Please log in.';
+          sucEl.style.display='block';btn.textContent='\u2713 Done!';btn.style.background='#16a34a';
+          setTimeout(function(){
+            document.getElementById('lo-register-form').style.display='none';
+            document.getElementById('lo-login-form').style.display='block';
+            loCurrentForm='login';
+            var loginSuc=document.getElementById('lo-login-suc');
+            if(loginSuc){loginSuc.textContent='\u2713 Account created! Now log in below.';loginSuc.style.display='block';}
+            document.getElementById('lo-username').value=username;
+            document.getElementById('lo-password').value='';
+            document.getElementById('lo-password').focus();
+            btn.disabled=false;btn.textContent='Create Account';btn.style.background='';
+            loPwLen=0;loRegPwLen=0;loShowPw=false;loShowRegPw=false;loRender();
+          },900);
+        }catch(e){errEl.textContent='Error: '+e.message;errEl.style.display='block';btn.disabled=false;btn.textContent='Create Account';btn.style.background='';}
+      }
+
+      /* Button events */
+      var loginBtn=document.getElementById('lo-login-btn');
+      if(loginBtn) loginBtn.addEventListener('click',loDoLogin);
+      var regBtn=document.getElementById('lo-register-btn');
+      if(regBtn) regBtn.addEventListener('click',loDoRegister);
+
+      /* Google login */
+      var gBtn=document.getElementById('lo-google-btn');
+      if(gBtn) gBtn.addEventListener('click',function(){
+        if(auth&&googleProvider){
+          auth.signInWithPopup(googleProvider).catch(function(e){
+            var errEl=document.getElementById('lo-login-err');
+            if(errEl){errEl.textContent='Google login only works on the hosted URL (https://). Not available locally.';errEl.style.display='block';}
+          });
+        }else{
+          var errEl=document.getElementById('lo-login-err');
+          if(errEl){errEl.textContent='Google login unavailable locally. Use username/password.';errEl.style.display='block';}
+        }
+      });
+
+      loRender();
+    })();
 
     document.addEventListener('DOMContentLoaded', renderDashboard);
 
