@@ -1046,6 +1046,98 @@
       flex-shrink: 0;
     }
 
+
+
+
+    /* ============ CATEGORY CYCLE BUTTON ============ */
+    .field-row { display: flex; gap: 6px; align-items: center; }
+    .field-row input, .field-row .inline-group { flex: 1; min-width: 0; }
+    .cat-cycle-btn {
+      flex-shrink: 0;
+      width: 78px;
+      padding: 7px 5px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--glass-border-hi);
+      background: transparent;
+      font-size: 11px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.18s var(--ease);
+      letter-spacing: .02em;
+    }
+    .cat-cycle-btn:hover { filter: brightness(1.2); }
+    .cat-cycle-btn.c-needs   { border-color: var(--needs);    color: var(--needs);    background: rgba(255,140,80,.08); }
+    .cat-cycle-btn.c-wants   { border-color: var(--warning);  color: var(--warning);  background: rgba(255,210,0,.08); }
+    .cat-cycle-btn.c-savings { border-color: var(--accent-1); color: var(--accent-1); background: rgba(0,229,199,.08); }
+    .cat-cycle-btn.c-invest  { border-color: var(--invest);   color: var(--invest);   background: rgba(161,90,255,.08); }
+    .cat-cycle-btn.c-others  { border-color: var(--text-3);   color: var(--text-3);   background: transparent; }
+
+    /* ============ PLANNER PROOF ROWS ============ */
+    .planner-proof-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .planner-proof-row:last-child { border-bottom: none; }
+    .planner-proof-name { flex: 1; color: var(--text-1); font-size: 13px; font-weight: 500; }
+    .planner-proof-amt  { color: var(--text-2); font-size: 12.5px; font-weight: 600; min-width: 72px; text-align: right; }
+
+    /* ============ PROOF ATTACHMENT ============ */
+    .det-proof-btn {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1px dashed var(--glass-border-hi);
+      background: transparent;
+      color: var(--text-3);
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s var(--ease);
+      padding: 0;
+      overflow: hidden;
+    }
+    .det-proof-btn:hover { border-color: var(--accent-1); color: var(--accent-1); background: var(--accent-glow); }
+    .det-proof-btn.has-proof { border-style: solid; border-color: var(--success); padding: 0; }
+    .det-proof-thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; display: block; }
+    .proof-lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10100;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .proof-lightbox-img {
+      max-width: min(480px, 90vw);
+      max-height: 72vh;
+      border-radius: var(--radius);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+      object-fit: contain;
+    }
+    .proof-lightbox-bar { display: flex; gap: 10px; }
+    .proof-lightbox-bar button {
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      border: none;
+    }
+
     @media (max-width: 780px) {
       .page-layout { grid-template-columns: 1fr; }
       .sticky-balance { position: static; margin-bottom: 4px; }
@@ -1211,6 +1303,44 @@
     </div>
   </div>
 </div>
+
+<!-- ============ ROW ACTION PASSWORD MODAL (delete / download single month) ============ -->
+<div id="row-action-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="background:var(--glass-bg);border:1px solid var(--glass-border-hi);border-radius:var(--radius);padding:32px 36px;width:380px;max-width:90vw;box-shadow:0 24px 60px rgba(0,0,0,0.5);">
+    <div id="row-action-icon-wrap" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <!-- icon injected by JS -->
+    </div>
+    <p id="row-action-subtitle" style="font-size:12.5px;color:var(--text-2);margin:10px 0 18px;line-height:1.6;"></p>
+    <div id="row-action-field-wrap">
+      <label style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;">Password</label>
+      <div style="position:relative;margin-top:6px;">
+        <input id="row-action-pw-input" type="password" placeholder="Your account password"
+          style="width:100%;padding:10px 40px 10px 12px;border-radius:var(--radius-sm);border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-1);font-size:13px;outline:none;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter')rowActionConfirm()">
+        <button onclick="rowActionPwToggle()" type="button"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-2);display:flex;padding:2px;z-index:2;">
+          <svg id="row-action-pw-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div id="row-action-pw-err" style="display:none;color:var(--danger);font-size:11.5px;margin-top:6px;font-weight:500;"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:22px;">
+      <button onclick="rowActionCancel()" style="flex:1;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--glass-border-hi);background:transparent;color:var(--text-2);font-size:13px;cursor:pointer;font-family:'Space Grotesk',sans-serif;">Cancel</button>
+      <button id="row-action-confirm-btn" onclick="rowActionConfirm()" style="flex:2;padding:10px;border-radius:var(--radius-sm);border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROOF LIGHTBOX MODAL ============ -->
+<div id="proof-lightbox-modal" class="proof-lightbox-overlay">
+  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:-8px;font-family:'Space Grotesk',sans-serif;" id="proof-lightbox-label"></div>
+  <img id="proof-lightbox-img" class="proof-lightbox-img" src="" alt="Transaction proof">
+  <div class="proof-lightbox-bar">
+    <button id="proof-remove-btn" onclick="removeCurrentProof()" style="background:rgba(255,92,114,0.18);color:var(--danger);border:1px solid rgba(255,92,114,0.4);">🗑 Remove</button>
+    <button onclick="closeLightbox()" style="background:var(--glass-strong);color:var(--text-1);border:1px solid var(--glass-border-hi);">✕ Close</button>
+  </div>
+</div>
+<input type="file" id="proof-file-input" accept="image/*" style="display:none" onchange="attachProofFileSelected()">
 
 <!-- ============ SESSION TIMEOUT WARNING MODAL ============ -->
 <div id="session-warn-modal" style="display:none;position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
@@ -1611,26 +1741,10 @@
           <div class="over-warn" id="t1h-warn">⚠ Allocation exceeds Total Salary!</div>
           <div class="tally-body">
             <div class="grid-2">
-              <div class="field"><label>Rent (₹)<span class="required-mark">*</span></label><input type="number"
-                  id="rent" value="6000" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
-              <div class="field"><label>PPF (₹)<span class="required-mark">*</span></label><input type="number" id="ppf"
-                  value="2000" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
-              <div class="field">
-                <label>RD (₹) <span class="section-badge" style="margin-left:0">bracket no.</span><span class="required-mark">*</span></label>
-                <div class="inline-group">
-                  <input type="number" id="rd" value="2000" oninput="live()" required>
-                  <input type="number" id="rd_n" value="5" placeholder="n" class="count-input">
-                </div>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
-              <div class="field"><label>Dharanish (₹)<span class="required-mark">*</span></label><input type="number"
-                  id="dharanish" value="3000" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
+              <div class="field"><label>Rent (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="rent" value="6000" oninput="live()" required><button type="button" class="cat-cycle-btn c-needs" data-cat="needs" data-field="rent" onclick="cycleCat(this)" title="Click to change category">⬤ Needs</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+              <div class="field"><label>PPF (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="ppf" value="2000" oninput="live()" required><button type="button" class="cat-cycle-btn c-savings" data-cat="invest" data-field="ppf" onclick="cycleCat(this)" title="Click to change category">⬤ Invest</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+<div class="field"><label>RD (₹) <span class="section-badge" style="margin-left:0">bracket no.</span><span class="required-mark">*</span></label><div class="field-row"><div class="inline-group"><input type="number" id="rd" value="2000" oninput="live()" required><input type="number" id="rd_n" value="5" placeholder="n" class="count-input"></div><button type="button" class="cat-cycle-btn c-savings" data-cat="savings" data-field="rd" onclick="cycleCat(this)" title="Click to change category">⬤ Savings</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+              <div class="field"><label>Dharanish (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="dharanish" value="3000" oninput="live()" required><button type="button" class="cat-cycle-btn c-wants" data-cat="needs" data-field="dharanish" onclick="cycleCat(this)" title="Click to change category">⬤ Needs</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
             </div>
           </div>
           <div class="over-warn" id="t1-warn">⚠ Sub-items exceed Tally 1 amount!</div>
@@ -1657,14 +1771,8 @@
           <div class="over-warn" id="t2h-warn">⚠ Allocation exceeds remaining budget pool!</div>
           <div class="tally-body">
             <div class="grid-2">
-              <div class="field"><label>Mutual Fund — Axis Bank (₹)<span class="required-mark">*</span></label><input
-                  type="number" id="mf" value="10000" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
-              <div class="field"><label>Direct Equity — Axis Bank (₹)<span class="required-mark">*</span></label><input
-                  type="number" id="eq" value="" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
+              <div class="field"><label>Mutual Fund — Axis Bank (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="mf" value="10000" oninput="live()" required><button type="button" class="cat-cycle-btn c-invest" data-cat="invest" data-field="mf" onclick="cycleCat(this)" title="Click to change category">⬤ Invest</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+              <div class="field"><label>Direct Equity — Axis Bank (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="eq" value="" oninput="live()" required><button type="button" class="cat-cycle-btn c-invest" data-cat="invest" data-field="eq" onclick="cycleCat(this)" title="Click to change category">⬤ Invest</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
             </div>
           </div>
           <div class="over-warn" id="t2-warn">⚠ Sub-items exceed Tally 2 amount!</div>
@@ -1689,10 +1797,7 @@
           <div class="over-warn" id="t3h-warn">⚠ Allocation exceeds remaining budget pool!</div>
           <div class="tally-body">
             <div class="grid-2">
-              <div class="field"><label>Dinesh (₹)<span class="required-mark">*</span></label><input type="number"
-                  id="dinesh" value="2000" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
+              <div class="field"><label>Dinesh (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="dinesh" value="2000" oninput="live()" required><button type="button" class="cat-cycle-btn c-wants" data-cat="needs" data-field="dinesh" onclick="cycleCat(this)" title="Click to change category">⬤ Needs</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
             </div>
           </div>
           <div class="over-warn" id="t3-warn">⚠ Sub-items exceed Tally 3 amount!</div>
@@ -1712,18 +1817,9 @@
             <button class="add-btn" onclick="addSecItem('sec-bank')" title="Add item">+</button>
           </div>
           <div class="grid-3">
-            <div class="field"><label>Indus Bank (₹)<span class="required-mark">*</span></label><input type="number"
-                id="indus" value="" oninput="live()" required>
-              <span class="field-error-msg" style="display:none">⚠ Required</span>
-            </div>
-            <div class="field"><label>Axis Bank (₹)<span class="required-mark">*</span></label><input type="number"
-                id="axis" value="" oninput="live()" required>
-              <span class="field-error-msg" style="display:none">⚠ Required</span>
-            </div>
-            <div class="field"><label>DBS Bank (₹)<span class="required-mark">*</span></label><input type="number"
-                id="dbs" value="" oninput="live()" required>
-              <span class="field-error-msg" style="display:none">⚠ Required</span>
-            </div>
+            <div class="field"><label>Indus Bank (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="indus" value="" oninput="live()" required><button type="button" class="cat-cycle-btn c-others" data-cat="savings" data-field="indus" onclick="cycleCat(this)" title="Click to change category">⬤ Savings</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+            <div class="field"><label>Axis Bank (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="axis" value="" oninput="live()" required><button type="button" class="cat-cycle-btn c-others" data-cat="savings" data-field="axis" onclick="cycleCat(this)" title="Click to change category">⬤ Savings</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+            <div class="field"><label>DBS Bank (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="dbs" value="" oninput="live()" required><button type="button" class="cat-cycle-btn c-others" data-cat="savings" data-field="dbs" onclick="cycleCat(this)" title="Click to change category">⬤ Savings</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
           </div>
           <div class="over-warn" id="bank-warn">⚠ Bank allocations exceed balance amount!</div>
           <button class="btn-confirm" id="sub-bank" onclick="submitSec('sec-bank','sec-t4')">Confirm Bank
@@ -1748,19 +1844,8 @@
           <div class="over-warn" id="t4h-warn">⚠ Allocation exceeds remaining budget pool!</div>
           <div class="tally-body">
             <div class="grid-2">
-              <div class="field">
-                <label>Sabarimalai (₹) <span class="section-badge" style="margin-left:0">bracket no.</span><span
-                    class="required-mark">*</span></label>
-                <div class="inline-group">
-                  <input type="number" id="sab" value="1000" oninput="live()" required>
-                  <input type="number" id="sab_n" value="4" placeholder="n" class="count-input">
-                </div>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
-              <div class="field"><label>Groww (₹)<span class="required-mark">*</span></label><input type="number"
-                  id="groww" value="921" oninput="live()" required>
-                <span class="field-error-msg" style="display:none">⚠ Required</span>
-              </div>
+<div class="field"><label>Sabarimalai (₹) <span class="section-badge" style="margin-left:0">bracket no.</span><span class="required-mark">*</span></label><div class="field-row"><div class="inline-group"><input type="number" id="sab" value="1000" oninput="live()" required><input type="number" id="sab_n" value="4" placeholder="n" class="count-input"></div><button type="button" class="cat-cycle-btn c-wants" data-cat="wants" data-field="sab" onclick="cycleCat(this)" title="Click to change category">⬤ Wants</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
+              <div class="field"><label>Groww (₹)<span class="required-mark">*</span></label><div class="field-row"><input type="number" id="groww" value="921" oninput="live()" required><button type="button" class="cat-cycle-btn c-invest" data-cat="invest" data-field="groww" onclick="cycleCat(this)" title="Click to change category">⬤ Invest</button></div><span class="field-error-msg" style="display:none">⚠ Required</span></div>
             </div>
           </div>
           <div class="over-warn" id="t4-warn">⚠ Sub-items exceed Tally 4 amount!</div>
@@ -1783,6 +1868,20 @@
           </div>
           <button class="btn-confirm" id="sub-ext" onclick="submitSec('sec-ext','report-area')">Confirm All & View
             Report</button>
+        </div>
+
+
+        <!-- TRANSACTION PROOFS -->
+        <div class="section glass section-locked" id="sec-proofs" style="margin-top:0">
+          <div class="section-header">
+            <div class="section-icon">📸</div>
+            <span class="section-title">Transaction Proofs</span>
+            <span class="section-badge">optional</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-3);margin:0 0 14px;line-height:1.7;">
+            Attach payment screenshots for each transaction. They will be saved with your report and viewable in the Dashboard → Breakdown Details.
+          </p>
+          <div id="planner-proofs-list"></div>
         </div>
 
         <!-- GENERATE BUTTON -->
@@ -1920,7 +2019,7 @@
 
       requiredInputs.forEach(input => {
         if (!input.value.trim()) {
-          const errMsg = input.parentElement.querySelector('.field-error-msg') || input.nextElementSibling;
+          const errMsg = input.closest('.field') ? input.closest('.field').querySelector('.field-error-msg') : input.nextElementSibling;
           if (errMsg && errMsg.classList.contains('field-error-msg')) {
             errMsg.style.display = 'block';
             hasError = true;
@@ -1935,6 +2034,8 @@
         const genBtn = document.getElementById('gen-report-btn');
         genBtn.style.display = 'block';
         unlock('gen-report-btn');
+        unlock('sec-proofs');
+        renderPlannerProofs();
       }
     }
 
@@ -1976,8 +2077,11 @@
 
       const fieldHtml = `
         <div class="field">
-          <label>${name} (₹) <button style="background:none;border:none;color:var(--danger);cursor:pointer;margin-left:4px;font-size:11px" onclick="this.parentElement.parentElement.remove(); live();" title="Remove">✕</button></label>
-          <input type="number" value="${amt}" oninput="live()" class="dynamic-item" data-name="${name}">
+          <label>${name} (₹) <button style="background:none;border:none;color:var(--danger);cursor:pointer;margin-left:4px;font-size:11px" onclick="this.parentElement.parentElement.remove();live();" title="Remove">✕</button></label>
+          <div class="field-row">
+            <input type="number" value="${amt}" oninput="live()" class="dynamic-item" data-name="${name}">
+            ${makeDynCatBtn(name, "others")}
+          </div>
         </div>
       `;
       row.insertAdjacentHTML('beforebegin', fieldHtml);
@@ -2107,7 +2211,7 @@
       Array.from(document.querySelectorAll('input[required]')).forEach(input => {
         if (input.value.trim() !== '') {
           const isHeader = input.classList.contains('header-input');
-          const err = isHeader ? input.closest('.section-header').nextElementSibling : input.parentElement.querySelector('.field-error-msg');
+          const err = isHeader ? input.closest('.section-header').nextElementSibling : input.closest('.field') ? input.closest('.field').querySelector('.field-error-msg') : null;
           if (err && err.classList.contains('field-error-msg')) err.style.display = 'none';
         }
       });
@@ -2141,6 +2245,35 @@
       const balLeft = sal - spent;
       const rBank = v('bankamt');
 
+      // Collect field categories
+      const snapCats = {};
+      ['rent','ppf','rd','dharanish','mf','eq','dinesh','indus','axis','dbs','sab','groww'].forEach(id => {
+        snapCats[id] = getCatVal(id);
+      });
+      document.querySelectorAll('.cat-cycle-btn[data-dyn]').forEach(el => {
+        snapCats['dyn_' + el.dataset.dyn] = el.dataset.cat || 'others';
+      });
+
+      // Category totals driven by per-item dropdowns
+      const allSnappedItems = [
+        { n:'Rent', a:rent, id:'rent' }, { n:'PPF', a:ppf, id:'ppf' },
+        { n:'RD', a:rd, id:'rd' }, { n:'Dharanish', a:dhar, id:'dharanish' },
+        { n:'Mutual Fund', a:mf, id:'mf' }, { n:'Direct Equity', a:eq, id:'eq' },
+        { n:'Dinesh', a:din, id:'dinesh' }, { n:'Indus Bank', a:indus, id:'indus' },
+        { n:'Axis Bank', a:axis, id:'axis' }, { n:'DBS Bank', a:dbs, id:'dbs' },
+        { n:'Sabarimalai', a:sab, id:'sab' }, { n:'Groww', a:groww, id:'groww' },
+        ...df1.map(i=>({n:i.n,a:i.a,dyn:true})), ...df2.map(i=>({n:i.n,a:i.a,dyn:true})),
+        ...df3.map(i=>({n:i.n,a:i.a,dyn:true})), ...dfb.map(i=>({n:i.n,a:i.a,dyn:true})),
+        ...df4.map(i=>({n:i.n,a:i.a,dyn:true})), ...extras.map(e=>({n:e.name,a:e.amt,dyn:true})),
+      ];
+      const getIC = (item) => item.id ? (snapCats[item.id]||'others') : (snapCats['dyn_'+item.n]||'others');
+      const catSum = (cat) => allSnappedItems.filter(i=>getIC(i)===cat).reduce((s,i)=>s+i.a,0);
+      const needsTot  = catSum('needs');
+      const wantsTot  = catSum('wants');
+      const savTot    = catSum('savings');
+      const invTot    = catSum('invest');
+      const othersTot = catSum('others');
+
       const cats = [
         { name: 'Needs', color: 'var(--needs)', items: [{ n: 'Rent', a: rent }, { n: 'Dharanish', a: dhar }, { n: 'Dinesh', a: din }, ...extras.map(e => ({ n: e.name, a: e.amt })), ...df1, ...df3] },
         { name: 'Wants', color: 'var(--wants)', items: [{ n: 'Sabarimalai', a: sab }, ...df4] },
@@ -2156,10 +2289,7 @@
       }).join('');
 
 
-      const needsTot = cats[0].items.reduce((s, i) => s + i.a, 0);
-      const wantsTot = cats[1].items.reduce((s, i) => s + i.a, 0);
-      const savTot = cats[2].items.reduce((s, i) => s + i.a, 0);
-      const invTot = cats[3].items.reduce((s, i) => s + i.a, 0);
+      // needsTot/wantsTot/savTot/invTot/othersTot computed below from category dropdowns
 
       // Use spent as base so all categories sum to 100%
       const base = spent || sal;
@@ -2180,6 +2310,14 @@
       document.getElementById('report-area').style.display = 'block';
       document.getElementById('report-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+      // ── Save pending proofs for this month (full replace, so removed proofs are wiped) ──
+      _proofsCache[month] = Object.assign({}, _pendingProofs);
+      persistProofs(month);
+      _pendingProofs = {};
+      renderPlannerProofs();
+
+      // (category totals calculated above)
+
       saveSnapshot({
         month: month,
         sal: sal, t1: t1, rent: rent, ppf: ppf, rd: rd, rdn: rdn, dhar: dhar,
@@ -2192,8 +2330,10 @@
         rBank: rBank,
         spent: spent,
         balLeft: balLeft,
+        cats: snapCats,
         needs: needsTot,
         wants: wantsTot,
+        others: othersTot,
         savings: savTot,
         invest: invTot
       });
@@ -2266,10 +2406,7 @@
         for (const e of extras) { extSec += `${B(run)} - ${B(e.amt)} = ${B(run - e.amt)}\t\t${e.name}(${P(e.amt)}).\n`; run -= e.amt; }
       }
 
-      const needsTot = rent + dhar + din + extTot + df1.reduce((s, f) => s + f.a, 0) + df3.reduce((s, f) => s + f.a, 0);
-      const wantsTot = sab + df4.reduce((s, f) => s + f.a, 0);
-      const savTot = indus + axis + dbs + rd + dfb.reduce((s, f) => s + f.a, 0);
-      const invTot = ppf + mf + eq + groww + df2.reduce((s, f) => s + f.a, 0);
+
 
       const base = spent || sal;
       const pctOfSpent = (a) => base ? ((a / base) * 100).toFixed(1) + '%' : '0%';
@@ -2379,7 +2516,7 @@
       // Re-render pie legend only
       const hist = getHistory();
       const snap = selectedMonth ? hist.find(h => h.month === selectedMonth) : null;
-      if (snap) { _pieSnap = snap; renderPie(snap.needs, snap.wants, snap.savings, snap.invest); }
+      if (snap) { _pieSnap = snap; renderPie(snap.needs, snap.wants, snap.savings, snap.invest, snap.others); }
     }
 
     /* ============================================================
@@ -2462,7 +2599,7 @@
       if (_sessionActive) return;
       _sessionActive = true;
       // Sync select to saved pref
-      const mins = getTimeoutMinutes();
+      const mins = 15;
       const sel = document.getElementById('session-timeout-select');
       if (sel) sel.value = String(mins);
       // Activity events reset the timer
@@ -2552,6 +2689,8 @@
       } else {
         clearSessionTimeout();
         _historyCache = null;
+        _proofsCache  = {};
+        _pendingProofs = {};
       }
       renderDashboard();
     });
@@ -2736,8 +2875,9 @@
 
     let _pieSnap = null; // current snapshot for drill-down
 
-    function renderPie(needs, wants, savings, invest) {
-      const total = needs + wants + savings + invest;
+    function renderPie(needs, wants, savings, invest, others) {
+      others = others || 0;
+      const total = needs + wants + savings + invest + others;
       const emptyEl = document.getElementById('dash-empty-pie');
       const wrapEl  = document.getElementById('dash-pie-wrap');
       if (!total) { emptyEl.style.display = 'block'; wrapEl.style.display = 'none'; return; }
@@ -2747,7 +2887,8 @@
         { name: 'Needs',      val: needs   },
         { name: 'Wants',      val: wants   },
         { name: 'Savings',    val: savings  },
-        { name: 'Investment', val: invest  }
+        { name: 'Investment', val: invest   },
+        { name: 'Others',     val: others   }
       ].filter(s => s.val > 0);
 
       const cx = 80, cy = 80, r = 68, rInner = 40;
@@ -2803,18 +2944,38 @@
       // Get items for this category from snap
       const snap = _pieSnap;
       const itemsMap = {
-        Needs:      [
-          { n:'Rent',        a: snap.rent  || 0 },
-          { n:'Dharanish',   a: snap.dhar  || 0 },
-          { n:'Dinesh',      a: snap.din   || 0 },
-          ...(snap.extras||[]).map(e=>({ n:e.name, a:e.amt })),
-          ...(snap.df1||[]).map(i=>({ n:i.n, a:i.a })),
-          ...(snap.df3||[]).map(i=>({ n:i.n, a:i.a })),
-        ],
-        Wants:      [
-          { n:'Sabarimalai', a: snap.sab   || 0 },
-          ...(snap.df4||[]).map(i=>({ n:i.n, a:i.a })),
-        ],
+        Needs: (() => {
+          if (!snap.cats) return [
+            { n:'Rent', a:snap.rent||0 }, { n:'Dharanish', a:snap.dhar||0 },
+            { n:'Dinesh', a:snap.din||0 }, ...(snap.extras||[]).map(e=>({n:e.name,a:e.amt})),
+            ...(snap.df1||[]).map(i=>({n:i.n,a:i.a})), ...(snap.df3||[]).map(i=>({n:i.n,a:i.a}))
+          ];
+          const all = [
+            { n:'Rent', a:snap.rent||0, id:'rent' }, { n:'PPF', a:snap.ppf||0, id:'ppf' },
+            { n:'RD', a:snap.rd||0, id:'rd' }, { n:'Dharanish', a:snap.dhar||0, id:'dharanish' },
+            { n:'Mutual Fund', a:snap.mf||0, id:'mf' }, { n:'Direct Equity', a:snap.eq||0, id:'eq' },
+            { n:'Dinesh', a:snap.din||0, id:'dinesh' }, { n:'Indus Bank', a:snap.indus||0, id:'indus' },
+            { n:'Axis Bank', a:snap.axis||0, id:'axis' }, { n:'DBS Bank', a:snap.dbs||0, id:'dbs' },
+            { n:'Sabarimalai', a:snap.sab||0, id:'sab' }, { n:'Groww', a:snap.groww||0, id:'groww' },
+            ...[...(snap.df1||[]),...(snap.df2||[]),...(snap.df3||[]),...(snap.dfb||[]),...(snap.df4||[])].map(i=>({n:i.n,a:i.a,dyn:true})),
+            ...(snap.extras||[]).map(e=>({n:e.name,a:e.amt,dyn:true}))
+          ];
+          return all.filter(i=>(i.id?snap.cats[i.id]:snap.cats['dyn_'+i.n])==='needs');
+        })(),
+        Wants: (() => {
+          if (!snap.cats) return [{ n:'Sabarimalai', a:snap.sab||0 }, ...(snap.df4||[]).map(i=>({n:i.n,a:i.a}))];
+          const _all2 = [
+            {n:'Rent',a:snap.rent||0,id:'rent'},{n:'PPF',a:snap.ppf||0,id:'ppf'},{n:'RD',a:snap.rd||0,id:'rd'},
+            {n:'Dharanish',a:snap.dhar||0,id:'dharanish'},{n:'Mutual Fund',a:snap.mf||0,id:'mf'},
+            {n:'Direct Equity',a:snap.eq||0,id:'eq'},{n:'Dinesh',a:snap.din||0,id:'dinesh'},
+            {n:'Indus Bank',a:snap.indus||0,id:'indus'},{n:'Axis Bank',a:snap.axis||0,id:'axis'},
+            {n:'DBS Bank',a:snap.dbs||0,id:'dbs'},{n:'Sabarimalai',a:snap.sab||0,id:'sab'},
+            {n:'Groww',a:snap.groww||0,id:'groww'},
+            ...[...(snap.df1||[]),...(snap.df2||[]),...(snap.df3||[]),...(snap.dfb||[]),...(snap.df4||[])].map(i=>({n:i.n,a:i.a,dyn:true})),
+            ...(snap.extras||[]).map(e=>({n:e.name,a:e.amt,dyn:true}))
+          ];
+          return _all2.filter(i=>(i.id?snap.cats[i.id]:snap.cats['dyn_'+i.n])==='wants');
+        })(),
         Savings:    [
           { n:'Indus Bank',  a: snap.indus || 0 },
           { n:'Axis Bank',   a: snap.axis  || 0 },
@@ -2829,6 +2990,24 @@
           { n:'Groww',       a: snap.groww || 0 },
           ...(snap.df2||[]).map(i=>({ n:i.n, a:i.a })),
         ],
+        Others: (() => {
+          // Items tagged as 'others' in cats
+          if (!snap.cats) return [];
+          const all = [
+            { n:'Rent', a:snap.rent||0, id:'rent' }, { n:'PPF', a:snap.ppf||0, id:'ppf' },
+            { n:'RD', a:snap.rd||0, id:'rd' }, { n:'Dharanish', a:snap.dhar||0, id:'dharanish' },
+            { n:'Mutual Fund', a:snap.mf||0, id:'mf' }, { n:'Direct Equity', a:snap.eq||0, id:'eq' },
+            { n:'Dinesh', a:snap.din||0, id:'dinesh' }, { n:'Indus Bank', a:snap.indus||0, id:'indus' },
+            { n:'Axis Bank', a:snap.axis||0, id:'axis' }, { n:'DBS Bank', a:snap.dbs||0, id:'dbs' },
+            { n:'Sabarimalai', a:snap.sab||0, id:'sab' }, { n:'Groww', a:snap.groww||0, id:'groww' },
+            ...[...(snap.df1||[]),...(snap.df2||[]),...(snap.df3||[]),...(snap.dfb||[]),...(snap.df4||[])].map(i=>({n:i.n,a:i.a,dyn:true})),
+            ...(snap.extras||[]).map(e=>({n:e.name,a:e.amt,dyn:true}))
+          ];
+          return all.filter(i => {
+            const c = i.id ? (snap.cats[i.id]||'others') : (snap.cats['dyn_'+i.n]||'others');
+            return c === 'others';
+          });
+        })(),
       };
       const items = (itemsMap[catName] || []).filter(i => i.a > 0);
       const catTotal = items.reduce((s,i) => s + i.a, 0);
@@ -2858,10 +3037,12 @@
     function onPieBackClick() {
       if (!_pieSnap) return;
       const { needs, wants, savings, invest } = _pieSnap;
-      const total = needs + wants + savings + invest;
+      const others = _pieSnap.others || 0;
+      const total = needs + wants + savings + invest + others;
       const segs = [
         { name:'Needs', val:needs }, { name:'Wants', val:wants },
-        { name:'Savings', val:savings }, { name:'Investment', val:invest }
+        { name:'Savings', val:savings }, { name:'Investment', val:invest },
+        { name:'Others', val:others }
       ].filter(s => s.val > 0);
       showPieLegend(segs, total);
     }
@@ -2927,12 +3108,18 @@
       if (!allItems.length) { emptyEl.style.display = 'block'; wrapEl.style.display = 'none'; return; }
 
       const maxAmt = Math.max(...allItems.map(i => i.a), 1);
+      const monthProofs = _proofsCache[snap.month] || {};
       const rows = allItems.map(item => {
         const barPct = (item.a / maxAmt * 100).toFixed(1);
+        const proof  = monthProofs[item.n];
+        const proofBtn = proof
+          ? `<button class="det-proof-btn has-proof" onclick="proofAction('${item.n}','${snap.month}')" title="View proof for ${item.n}"><img class="det-proof-thumb" src="${proof}" alt="proof"></button>`
+          : `<div style="width:26px;height:26px;flex-shrink:0;"></div>`;
         return `<div class="det-row">
           <div class="det-row-name">${item.n}</div>
           <div class="det-track"><div class="det-fill" style="width:${barPct}%;background:${item.c}"></div></div>
           <div class="det-row-val">₹${fmt(item.a)}</div>
+          ${proofBtn}
         </div>`;
       }).join('');
 
@@ -2952,8 +3139,9 @@
           <td class="rc">₹${fmt(h.spent)}</td>
           <td class="rc" style="color:${h.balLeft < 0 ? 'var(--danger)' : 'var(--success)'}">₹${fmt(h.balLeft)}</td>
           <td class="rc"><button class="history-del" style="color:var(--accent-1)" onclick="selectMonthFromTable('${h.month}')" title="View this month">◔</button></td>
-          <td class="rc"><button class="history-del" style="color:var(--success)" onclick="downloadHistoryReport('${h.month}')" title="Download report for this month">⬇</button></td>
-          <td class="rc"><button class="history-del" onclick="deleteSnapshot('${h.month}')" title="Delete this month">✕</button></td>
+          <td class="rc"><button class="history-del" style="color:var(--success)" onclick="downloadHistoryReportPrompt('${h.month}')" title="Download report for this month">⬇</button></td>
+          <td class="rc"><button class="history-del" style="color:var(--accent-2)" onclick="editSnapshotPrompt('${h.month}')" title="Edit this month in Planner">✏</button></td>
+          <td class="rc"><button class="history-del" onclick="deleteSnapshotPrompt('${h.month}')" title="Delete this month">✕</button></td>
         </tr>
       `).join('');
 
@@ -2995,6 +3183,306 @@
         rBank: snap.rBank
       });
       downloadTxt(txt, `${snap.month}.txt`);
+    }
+
+    /* ---- Row-level action password gate (delete / download single month) ---- */
+    let _rowActionPending = null; // { mode: 'delete'|'download', month: '...' }
+    let _rowActionPwVisible = false;
+
+    function deleteSnapshotPrompt(month) {
+      _rowActionPending = { mode: 'delete', month: month };
+      const modal      = document.getElementById('row-action-modal');
+      const iconWrap   = document.getElementById('row-action-icon-wrap');
+      const sub        = document.getElementById('row-action-subtitle');
+      const fieldWrap  = document.getElementById('row-action-field-wrap');
+      const inp        = document.getElementById('row-action-pw-input');
+      const err        = document.getElementById('row-action-pw-err');
+      const confirmBtn = document.getElementById('row-action-confirm-btn');
+      const eye        = document.getElementById('row-action-pw-eye');
+
+      // Icon — danger trash
+      iconWrap.innerHTML = `
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,92,114,0.15);border:2px solid rgba(255,92,114,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--text-1);">Delete Record</div>
+          <div style="font-size:12px;color:var(--danger);font-weight:500;margin-top:2px;">⚠ This cannot be undone</div>
+        </div>`;
+
+      confirmBtn.textContent = 'Delete Record';
+      confirmBtn.style.background = 'var(--danger)';
+
+      // Reset
+      inp.value = ''; err.style.display = 'none'; _rowActionPwVisible = false;
+      inp.type = 'password';
+      eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      confirmBtn.disabled = false;
+
+      if (_currentUser && !_activeUserId.startsWith('usr_')) {
+        sub.textContent = `You are signed in with Google. Click "Delete Record" to permanently remove the record for ${month}.`;
+        fieldWrap.style.display = 'none';
+      } else {
+        sub.textContent = `The record for ${month} will be permanently deleted. Enter your password to confirm.`;
+        fieldWrap.style.display = 'block';
+      }
+      modal.style.display = 'flex';
+      setTimeout(() => { if (fieldWrap.style.display !== 'none') inp.focus(); }, 80);
+    }
+
+    function downloadHistoryReportPrompt(month) {
+      _rowActionPending = { mode: 'download', month: month };
+      const modal      = document.getElementById('row-action-modal');
+      const iconWrap   = document.getElementById('row-action-icon-wrap');
+      const sub        = document.getElementById('row-action-subtitle');
+      const fieldWrap  = document.getElementById('row-action-field-wrap');
+      const inp        = document.getElementById('row-action-pw-input');
+      const err        = document.getElementById('row-action-pw-err');
+      const confirmBtn = document.getElementById('row-action-confirm-btn');
+      const eye        = document.getElementById('row-action-pw-eye');
+
+      // Icon — accent lock
+      iconWrap.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span style="font-size:16px;font-weight:700;color:var(--text-1)">Confirm Identity</span>`;
+
+      confirmBtn.textContent = 'Download Report';
+      confirmBtn.style.background = 'var(--accent-grad)';
+
+      // Reset
+      inp.value = ''; err.style.display = 'none'; _rowActionPwVisible = false;
+      inp.type = 'password';
+      eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      confirmBtn.disabled = false;
+
+      if (_currentUser && !_activeUserId.startsWith('usr_')) {
+        sub.textContent = `You are signed in with Google. Click "Download Report" to download the report for ${month}.`;
+        fieldWrap.style.display = 'none';
+      } else {
+        sub.textContent = `Enter your password to download the report for ${month}.`;
+        fieldWrap.style.display = 'block';
+      }
+      modal.style.display = 'flex';
+      setTimeout(() => { if (fieldWrap.style.display !== 'none') inp.focus(); }, 80);
+    }
+
+    function rowActionPwToggle() {
+      _rowActionPwVisible = !_rowActionPwVisible;
+      const inp = document.getElementById('row-action-pw-input');
+      const eye = document.getElementById('row-action-pw-eye');
+      inp.type = _rowActionPwVisible ? 'text' : 'password';
+      eye.innerHTML = _rowActionPwVisible
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+
+
+    /* ---- Edit snapshot: password gate → load into planner ---- */
+
+    function editSnapshotPrompt(month) {
+      _rowActionPending = { mode: 'edit', month: month };
+      const modal      = document.getElementById('row-action-modal');
+      const iconWrap   = document.getElementById('row-action-icon-wrap');
+      const sub        = document.getElementById('row-action-subtitle');
+      const fieldWrap  = document.getElementById('row-action-field-wrap');
+      const inp        = document.getElementById('row-action-pw-input');
+      const err        = document.getElementById('row-action-pw-err');
+      const confirmBtn = document.getElementById('row-action-confirm-btn');
+      const eye        = document.getElementById('row-action-pw-eye');
+
+      iconWrap.innerHTML = `
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(161,90,255,0.15);border:2px solid rgba(161,90,255,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--text-1);">Edit Report</div>
+          <div style="font-size:12px;color:var(--accent-2);font-weight:500;margin-top:2px;">${month}</div>
+        </div>`;
+
+      confirmBtn.textContent = 'Open in Planner';
+      confirmBtn.style.background = 'linear-gradient(135deg,#a15aff,#7b61ff)';
+
+      inp.value = ''; err.style.display = 'none'; _rowActionPwVisible = false;
+      inp.type = 'password';
+      eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      confirmBtn.disabled = false;
+
+      if (_currentUser && !_activeUserId.startsWith('usr_')) {
+        sub.textContent = 'You are signed in with Google. Click "Open in Planner" to load this month\'s data.';
+        fieldWrap.style.display = 'none';
+      } else {
+        sub.textContent = 'Enter your password to load the report for ' + month + ' into the Planner for editing.';
+        fieldWrap.style.display = 'block';
+      }
+      modal.style.display = 'flex';
+      setTimeout(() => { if (fieldWrap.style.display !== 'none') inp.focus(); }, 80);
+    }
+
+    function injectDynamicItem(secId, name, amt, cat) {
+      if (!name || !amt) return;
+      const grid = document.querySelector('#' + secId + ' div[class^="grid-"]');
+      if (!grid) return;
+      const catVal = (cat || 'others');
+      const fieldHtml = `<div class="field">
+        <label>${name} (₹) <button style="background:none;border:none;color:var(--danger);cursor:pointer;margin-left:4px;font-size:11px" onclick="this.parentElement.parentElement.remove();live();" title="Remove">✕</button></label>
+        <div class="field-row">
+          <input type="number" value="${amt}" oninput="live()" class="dynamic-item" data-name="${name}">
+          ${makeDynCatBtn(name, catVal)}
+        </div>
+      </div>`;
+      // Remove any existing inline-add-row first
+      const existing = grid.querySelector('.inline-add-row');
+      if (existing) existing.remove();
+      grid.insertAdjacentHTML('beforeend', fieldHtml);
+    }
+
+    function editSnapshot(month) {
+      const snap = (_historyCache || []).find(h => h.month === month);
+      if (!snap) { showToast('❌ Record not found'); return; }
+
+      // ── Helper: set input value safely ──
+      const setV = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = (val !== undefined && val !== null) ? val : '';
+      };
+
+      // ── 1. Basic Info ──
+      setV('salary', snap.sal);
+      if (snap.month) {
+        const [dd, mm, yyyy] = snap.month.split('.');
+        setV('month', `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`);
+      }
+
+      // ── 2. Tally 1 ──
+      setV('t1', snap.t1);
+      setV('rent', snap.rent);
+      setV('ppf', snap.ppf);
+      setV('rd', snap.rd);
+      setV('rd_n', snap.rdn);
+      setV('dharanish', snap.dhar);
+      // Clear & re-inject dynamic items
+      document.querySelectorAll('#sec-t1 .dynamic-item').forEach(el => el.closest('.field').remove());
+      (snap.df1 || []).forEach(item => injectDynamicItem('sec-t1', item.n, item.a, snap.cats && snap.cats['dyn_'+item.n]));
+
+      // ── 3. Tally 2 ──
+      setV('t2extra', snap.t2extra);
+      setV('mf', snap.mf);
+      setV('eq', snap.eq);
+      document.querySelectorAll('#sec-t2 .dynamic-item').forEach(el => el.closest('.field').remove());
+      (snap.df2 || []).forEach(item => injectDynamicItem('sec-t2', item.n, item.a, snap.cats && snap.cats['dyn_'+item.n]));
+
+      // ── 4. Tally 3 ──
+      setV('t3', snap.t3);
+      setV('dinesh', snap.din);
+      document.querySelectorAll('#sec-t3 .dynamic-item').forEach(el => el.closest('.field').remove());
+      (snap.df3 || []).forEach(item => injectDynamicItem('sec-t3', item.n, item.a, snap.cats && snap.cats['dyn_'+item.n]));
+
+      // ── 5. Bank Distribution ──
+      setV('indus', snap.indus);
+      setV('axis', snap.axis);
+      setV('dbs', snap.dbs);
+      document.querySelectorAll('#sec-bank .dynamic-item').forEach(el => el.closest('.field').remove());
+      (snap.dfb || []).forEach(item => injectDynamicItem('sec-bank', item.n, item.a, snap.cats && snap.cats['dyn_'+item.n]));
+
+      // ── 6. Tally 4 ──
+      setV('t4', snap.t4);
+      setV('sab', snap.sab);
+      setV('sab_n', snap.sabn);
+      setV('groww', snap.groww);
+      document.querySelectorAll('#sec-t4 .dynamic-item').forEach(el => el.closest('.field').remove());
+      (snap.df4 || []).forEach(item => injectDynamicItem('sec-t4', item.n, item.a, snap.cats && snap.cats['dyn_'+item.n]));
+
+      // ── 7. Additional Items (extras) ──
+      extras = (snap.extras || []).map(e => ({ name: e.name || e.n, amt: e.amt || e.a }));
+      renderExtras();
+
+      // ── 8. Unlock all sections ──
+      ['sec-t1','sec-t2','sec-t3','sec-bank','sec-t4','sec-ext','sec-proofs','gen-report-btn','report-area'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('section-locked'); el.style.display = id === 'gen-report-btn' ? 'block' : ''; }
+      });
+
+      // ── 9. Restore field categories ──
+      if (snap.cats) {
+        ['rent','ppf','rd','dharanish','mf','eq','dinesh','indus','axis','dbs','sab','groww'].forEach(id => {
+          if (snap.cats[id]) setCatVal(id, snap.cats[id]);
+        });
+        // dynamic item categories restored after injectDynamicItem calls above
+        ['sec-t1','sec-t2','sec-t3','sec-bank','sec-t4'].forEach(secId => {
+          document.querySelectorAll('#' + secId + ' .cat-sel[data-dyn]').forEach(el => {
+            const key = 'dyn_' + el.dataset.dyn;
+            if (snap.cats[key]) { el.value = snap.cats[key]; colorCat(el); }
+          });
+        });
+      }
+
+      // ── 10. Pre-load proofs from this month's cache ──
+      _pendingProofs = Object.assign({}, (_proofsCache[snap.month] || {}));
+
+      // ── 10. Recalculate live + switch tab ──
+      live();
+      renderPlannerProofs();
+      switchTab('planner');
+      setTimeout(() => {
+        document.getElementById('tab-planner').scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+      showToast('✏ Loaded ' + month + ' into Planner');
+    }
+
+    function rowActionCancel() {
+      document.getElementById('row-action-modal').style.display = 'none';
+      _rowActionPending = null;
+    }
+
+    async function rowActionConfirm() {
+      if (!_rowActionPending) return;
+      const modal      = document.getElementById('row-action-modal');
+      const fieldWrap  = document.getElementById('row-action-field-wrap');
+      const inp        = document.getElementById('row-action-pw-input');
+      const err        = document.getElementById('row-action-pw-err');
+      const btn        = document.getElementById('row-action-confirm-btn');
+      const { mode, month } = _rowActionPending;
+
+      // Google user — skip password check
+      if (_currentUser && !_activeUserId.startsWith('usr_')) {
+        modal.style.display = 'none';
+        _rowActionPending = null;
+        if (mode === 'delete') deleteSnapshot(month);
+        else downloadHistoryReport(month);
+        return;
+      }
+
+      const pw = inp.value;
+      if (!pw) { err.textContent = 'Please enter your password.'; err.style.display = 'block'; return; }
+
+      const origLabel = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Verifying...';
+      err.style.display = 'none';
+
+      try {
+        const enc    = new TextEncoder();
+        const buf    = await crypto.subtle.digest('SHA-256', enc.encode(pw));
+        const hashed = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+        const username = _activeUserId.replace('usr_', '');
+        const snap   = await db.collection('app_users').doc(username).get();
+
+        if (!snap.exists || snap.data().password !== hashed) {
+          err.textContent = 'Incorrect password. Please try again.';
+          err.style.display = 'block';
+          btn.disabled = false; btn.textContent = origLabel;
+          return;
+        }
+        modal.style.display = 'none';
+        _rowActionPending = null;
+        if (mode === 'delete') deleteSnapshot(month);
+        else if (mode === 'edit') editSnapshot(month);
+        else downloadHistoryReport(month);
+      } catch(e) {
+        err.textContent = 'Error: ' + e.message;
+        err.style.display = 'block';
+        btn.disabled = false; btn.textContent = origLabel;
+      }
     }
 
     /* ---- Download All with password gate ---- */
@@ -3176,6 +3664,266 @@
       return `${name} ${yyyy}`;
     }
 
+
+
+
+    /* ============ FIELD CATEGORIES ============ */
+    const CAT_DEFAULTS = {
+      rent:'needs', ppf:'invest', rd:'savings', dharanish:'needs',
+      mf:'invest', eq:'invest', dinesh:'needs',
+      indus:'savings', axis:'savings', dbs:'savings',
+      sab:'wants', groww:'invest'
+    };
+
+    const CAT_ORDER  = ['needs','wants','savings','invest','others'];
+    const CAT_LABELS = { needs:'Needs', wants:'Wants', savings:'Savings', invest:'Invest', others:'Others' };
+    const CAT_DOTS   = { needs:'⬤', wants:'⬤', savings:'⬤', invest:'⬤', others:'◯' };
+
+    function cycleCat(btn) {
+      const idx  = CAT_ORDER.indexOf(btn.dataset.cat || 'others');
+      const next = CAT_ORDER[(idx + 1) % CAT_ORDER.length];
+      btn.dataset.cat = next;
+      btn.className   = 'cat-cycle-btn c-' + next;
+      btn.textContent = CAT_DOTS[next] + ' ' + CAT_LABELS[next];
+    }
+
+    function makeCatBtn(fieldId, defaultVal) {
+      const val = defaultVal || CAT_DEFAULTS[fieldId] || 'others';
+      return `<button type="button" class="cat-cycle-btn c-${val}" data-cat="${val}" data-field="${fieldId}" onclick="cycleCat(this)" title="Click to change category">${CAT_DOTS[val]} ${CAT_LABELS[val]}</button>`;
+    }
+
+    function makeDynCatBtn(name, defaultVal) {
+      const val = defaultVal || 'others';
+      return `<button type="button" class="cat-cycle-btn c-${val}" data-cat="${val}" data-dyn="${name}" onclick="cycleCat(this)" title="Click to change category">${CAT_DOTS[val]} ${CAT_LABELS[val]}</button>`;
+    }
+
+    function getCatVal(fieldId) {
+      const el = document.querySelector('[data-field="' + fieldId + '"]');
+      return el ? (el.dataset.cat || 'others') : (CAT_DEFAULTS[fieldId] || 'others');
+    }
+
+    function setCatVal(fieldId, val) {
+      const el = document.querySelector('[data-field="' + fieldId + '"]');
+      if (el && val) {
+        el.dataset.cat = val;
+        el.className   = 'cat-cycle-btn c-' + val;
+        el.textContent = CAT_DOTS[val] + ' ' + CAT_LABELS[val];
+      }
+    }
+
+    function colorCat(el) { /* kept for compatibility */ }
+
+    function getPlannerItems() {
+      const items = [];
+      const add = (n, a) => { if (a > 0) items.push({ n, a }); };
+      add('Rent',          v('rent'));
+      add('PPF',           v('ppf'));
+      add('RD',            v('rd'));
+      add('Dharanish',     v('dharanish'));
+      add('Mutual Fund',   v('mf'));
+      add('Direct Equity', v('eq'));
+      add('Dinesh',        v('dinesh'));
+      add('Indus Bank',    v('indus'));
+      add('Axis Bank',     v('axis'));
+      add('DBS Bank',      v('dbs'));
+      add('Sabarimalai',   v('sab'));
+      add('Groww',         v('groww'));
+      // dynamic section items
+      ['sec-t1','sec-t2','sec-t3','sec-bank','sec-t4'].forEach(id => {
+        document.querySelectorAll('#' + id + ' .dynamic-item').forEach(inp => {
+          add(inp.dataset.name, parseFloat(inp.value) || 0);
+        });
+      });
+      // additional extras
+      extras.forEach(e => { if (e.amt > 0) items.push({ n: e.name, a: e.amt }); });
+      return items;
+    }
+
+    function renderPlannerProofs() {
+      const list  = document.getElementById('planner-proofs-list');
+      if (!list) return;
+      const items = getPlannerItems();
+      if (!items.length) {
+        list.innerHTML = '<p style="color:var(--text-3);font-size:12px;text-align:center;padding:10px 0;">No items with amounts found.</p>';
+        return;
+      }
+      list.innerHTML = items.map(item => {
+        const proof = _pendingProofs[item.n];
+        const proofBtn = proof
+          ? `<button class="det-proof-btn has-proof" onclick="plannerProofView('${item.n}')" title="View / change proof for ${item.n}"><img class="det-proof-thumb" src="${proof}" alt="proof"></button>`
+          : `<button class="det-proof-btn" onclick="plannerProofAttach('${item.n}')" title="Attach screenshot for ${item.n}">📎</button>`;
+        return `<div class="planner-proof-row">
+          <span class="planner-proof-name">${item.n}</span>
+          <span class="planner-proof-amt">₹${fmt(item.a)}</span>
+          ${proofBtn}
+        </div>`;
+      }).join('');
+    }
+
+    function plannerProofAttach(itemName) {
+      _currentProofItem  = itemName;
+      _currentProofMonth = null;   // null = planner context (not yet saved)
+      document.getElementById('proof-file-input').value = '';
+      document.getElementById('proof-file-input').click();
+    }
+
+    function plannerProofView(itemName) {
+      _currentProofItem  = itemName;
+      _currentProofMonth = null;
+      openLightbox(_pendingProofs[itemName], itemName, 'Pending (will save on Generate Report)');
+    }
+
+    /* ============================================================
+       TRANSACTION PROOF ATTACHMENTS
+       ============================================================ */
+    let _proofsCache    = {};  // { month: { itemName: base64 } }
+    let _pendingProofs  = {};  // proofs attached in planner before generate()
+    let _currentProofMonth = null;
+    let _currentProofItem  = null;
+
+    function proofDocId(month) {
+      return 'proof_' + month.replace(/\./g, '_');
+    }
+
+    async function loadProofsForMonth(month) {
+      if (!month) return;
+      if (_proofsCache[month] !== undefined) {
+        // Already cached — just refresh the breakdown UI
+        renderItemDetails(_pieSnap);
+        return;
+      }
+      _proofsCache[month] = {};  // mark as "loading"
+      try {
+        if (_activeUserId && db) {
+          const docRef = db.collection('users').doc(_activeUserId).collection('finance').doc(proofDocId(month));
+          const snap = await docRef.get();
+          _proofsCache[month] = snap.exists ? (snap.data().items || {}) : {};
+        } else {
+          try {
+            const raw = localStorage.getItem('df_proofs_' + month);
+            _proofsCache[month] = raw ? JSON.parse(raw) : {};
+          } catch(e) { _proofsCache[month] = {}; }
+        }
+      } catch(e) { console.error('Proof load error', e); _proofsCache[month] = {}; }
+      // Re-render breakdown with loaded proofs
+      renderItemDetails(_pieSnap);
+    }
+
+    async function persistProofs(month) {
+      const items = _proofsCache[month] || {};
+      try {
+        if (_activeUserId && db) {
+          await db.collection('users').doc(_activeUserId).collection('finance').doc(proofDocId(month))
+            .set({ items: items, updatedAt: Date.now() });
+        } else {
+          localStorage.setItem('df_proofs_' + month, JSON.stringify(items));
+        }
+      } catch(e) { console.error('Proof save error', e); }
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const MAX = 700;
+            let w = img.width, h = img.height;
+            if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.65));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function proofAction(itemName, month) {
+      const proof = (_proofsCache[month] || {})[itemName];
+      _currentProofItem  = itemName;
+      _currentProofMonth = month;
+      if (proof) {
+        openLightbox(proof, itemName, month);
+      } else {
+        document.getElementById('proof-file-input').value = '';
+        document.getElementById('proof-file-input').click();
+      }
+    }
+
+    async function attachProofFileSelected() {
+      const input = document.getElementById('proof-file-input');
+      const file  = input.files && input.files[0];
+      if (!file || !_currentProofItem) return;
+
+      showToast('⏳ Compressing image...');
+      try {
+        const base64 = await compressImage(file);
+
+        if (_currentProofMonth === null) {
+          // ── Planner context: store in pending, refresh planner list ──
+          _pendingProofs[_currentProofItem] = base64;
+          showToast('✓ Proof attached');
+          renderPlannerProofs();
+        } else {
+          // ── Dashboard context: persist directly ──
+          if (!_proofsCache[_currentProofMonth]) _proofsCache[_currentProofMonth] = {};
+          _proofsCache[_currentProofMonth][_currentProofItem] = base64;
+          await persistProofs(_currentProofMonth);
+          showToast('✓ Proof attached');
+          renderItemDetails(_pieSnap);
+        }
+      } catch(e) {
+        showToast('❌ Failed to attach image');
+        console.error(e);
+      }
+    }
+
+    function openLightbox(base64, itemName, month) {
+      const overlay   = document.getElementById('proof-lightbox-modal');
+      const removeBtn = document.getElementById('proof-remove-btn');
+      document.getElementById('proof-lightbox-img').src   = base64;
+      document.getElementById('proof-lightbox-label').textContent = itemName + '  ·  ' + (month || '');
+      // Show Remove only in planner context (_currentProofMonth === null)
+      removeBtn.style.display = _currentProofMonth === null ? 'block' : 'none';
+      overlay.style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      document.getElementById('proof-lightbox-modal').style.display = 'none';
+      document.getElementById('proof-lightbox-img').src = '';
+    }
+
+    async function removeCurrentProof() {
+      if (!_currentProofItem) return;
+      if (!confirm('Remove proof for ' + _currentProofItem + '?')) return;
+
+      if (_currentProofMonth === null) {
+        // Planner context
+        delete _pendingProofs[_currentProofItem];
+        closeLightbox();
+        showToast('🗑 Proof removed');
+        renderPlannerProofs();
+      } else {
+        // Dashboard context
+        delete (_proofsCache[_currentProofMonth] || {})[_currentProofItem];
+        await persistProofs(_currentProofMonth);
+        closeLightbox();
+        showToast('🗑 Proof removed');
+        renderItemDetails(_pieSnap);
+      }
+    }
+
+    // Close lightbox on backdrop click
+    document.addEventListener('click', function(e) {
+      const overlay = document.getElementById('proof-lightbox-modal');
+      if (e.target === overlay) closeLightbox();
+    });
+
     function renderDashboard() {
       const hist = getHistory();
 
@@ -3195,9 +3943,10 @@
         balEl.style.color = snap.balLeft < 0 ? 'var(--danger)' : 'var(--success)';
         document.getElementById('dash-balance-pct').textContent = pctStr(Math.max(0, snap.balLeft), snap.sal) + ' remaining';
 
-        renderPie(snap.needs, snap.wants, snap.savings, snap.invest);
+        renderPie(snap.needs, snap.wants, snap.savings, snap.invest, snap.others);
         _pieSnap = snap;
         renderItemDetails(snap);
+        loadProofsForMonth(snap.month);
       } else {
         labelEl.textContent = 'No month selected';
         document.getElementById('dash-salary').textContent = '₹0';
@@ -3435,6 +4184,7 @@
         _activeUserId=userId;
         updateAuthUI({displayName:displayName,photoURL:null});
         _historyCache=null;
+        _proofsCache={};
         _brokersState={stocks:{},mf:{}};
         var ov=document.getElementById('login-overlay');
         if(ov) ov.style.display='none';
